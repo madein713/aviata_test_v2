@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "aviata_test_v2"
+version = "0.1.0"
+description = ""
+authors = ["madein713 <nogaevskii@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+asyncpg = "^0.25.0"
+alembic = "^1.7.5"
+fastapi = "^0.73.0"
+uvicorn = "^0.17.0"
+aiohttp = "^3.8.1"
+aiofiles = "^0.8.0"
+xmltodict = "^0.12.0"
+redis = "^4.1.2"
+celery = "^5.2.3"
+
+[tool.poetry.dev-dependencies]
+SQLAlchemy = "^1.4.31"
+fastapi = "^0.73.0"
+uvicorn = "^0.17.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

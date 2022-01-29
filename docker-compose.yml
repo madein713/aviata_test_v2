@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:latest
+    volumes:
+        - ./postgres-data:/var/lib/postgresql/data
+    user: postgres
+    environment:
+        - POSTGRES_DATABASE=postgres
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
+  
+  airflow:
+    build: .
+    volumes:
+      - .:/code/
+    working_dir: /code/airflow
+    command: python app.py
+    ports:
+      - '9000:9000'
+
+  provider_a:
+    build: .
+    volumes:
+      - .:/code/
+    working_dir: /code/provider_a
+    command: uvicorn app:app --host=0.0.0.0 --port=9001 --reload
+    ports:
+      - '9001:9001'
+
+  provider_b:
+    build: .
+    volumes:
+      - .:/code/
+    working_dir: /code/provider_b
+    command: uvicorn app:app --host=0.0.0.0 --port=9002 --reload
+    ports:
+      - '9002:9002'
+
+  redis:
+    image: redis:latest
+    ports:
+    - '6379:6379'
+  
+  celery_beat:
+    build: .
+    working_dir: /code/airflow
+    command: celery -A celery_app.app beat -l info
+    container_name: celery_beat
+    hostname: celery_beat
+    restart: on-failure
