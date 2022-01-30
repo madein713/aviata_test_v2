@@ -11,8 +11,8 @@ class FlightSearchBase:
 
 @dataclass
 class FlightSearchCreate(FlightSearchBase):
-    departure_back_at: Optional[date]
-    departure_back_airport: Optional[str]
-    arrival_airport: Optional[str]
-    back: Optional[bool]
+    departure_back_at: Optional[date] = None
+    departure_back_airport: Optional[str] = None
+    arrival_airport: Optional[str] = None
+    back: Optional[bool] = False
     currency_code: str = 'KZT'

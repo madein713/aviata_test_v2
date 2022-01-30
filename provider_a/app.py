@@ -17,5 +17,5 @@ async def flight_search(
     flights = await repo.get_flights(request)
     if not flights:
         return Response('По данному направлению нет рейсов', status_code=204)
-    await asyncio.sleep(5)
+    await asyncio.sleep(30)
     return flights

@@ -8,7 +8,7 @@ import json
 
 @dataclass
 class FlightRepository:
-    json_path: str = settings.STATIC_DATA + '/response_a.json'
+    json_path: str = settings.STATIC_DATA + '/response_b.json'
 
     async def get_flights(self, request: FlightSearchCreate):
         suitable_flight = {

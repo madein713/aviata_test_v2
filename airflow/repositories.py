@@ -76,24 +76,27 @@ class Repository:
 
         if response:
             flights_ = []
-            for list_ in response['there']:
-                departure_at = datetime.fromisoformat(list_['flights']['segment']['dep']['at'])
-                departure_airport = list_['flights']['segment']['dep']['airport']
-                arrival_at = datetime.fromisoformat(list_['flights']['segment']['arr']['at'])
-                arrival_airport = list_['flights']['segment']['arr']['airport']
-                price = float(list_['pricing']['total'])
-                currency = list_['pricing']['currency']
-                if currency != 'KZT':
-                    flight_ex_rate = await self.get_rate(currency)
-                    price = price * float(flight_ex_rate)
-                obj = FlightInfo(
-                    departure_at=departure_at, departure_airport=departure_airport,
-                    arrival_at=arrival_at, arrival_airport=arrival_airport,
-                    price=price, currency="KZT",
-                    flight_search_id=flight_search.id
-                )
-                flights_.append(obj)
-            self.session.add_all(flights_)
+            for _, list_ in response.items():
+                if list_:
+                    print(list_)
+                    departure_at = datetime.fromisoformat(list_[0]['flights']['segment']['dep']['at'])
+                    departure_airport = list_[0]['flights']['segment']['dep']['airport']
+                    arrival_at = datetime.fromisoformat(list_[0]['flights']['segment']['arr']['at'])
+                    arrival_airport = list_[0]['flights']['segment']['arr']['airport']
+                    price = float(list_[0]['pricing']['total'])
+                    currency = list_[0]['pricing']['currency']
+                    if currency != 'KZT':
+                        flight_ex_rate = await self.get_rate(currency)
+                        price = price * float(flight_ex_rate)
+                    obj = FlightInfo(
+                        departure_at=departure_at, departure_airport=departure_airport,
+                        arrival_at=arrival_at, arrival_airport=arrival_airport,
+                        price=price, currency="KZT",
+                        flight_search_id=flight_search.id
+                    )
+                    flights_.append(obj)
+            if flights_:
+                self.session.add_all(flights_)
             if res.host == 'provider_b':
                 flight_search.complete()
             self.session.add(flight_search)
@@ -102,6 +105,7 @@ class Repository:
             except Exception as e:
                 logging.info(e)
                 await self.session.rollback()
+            
 
     async def get_result_by_uuid(self, uuid) -> FlightSearch:
         result = await self.session.execute(select(FlightSearch).filter_by(uuid=uuid))
